@@ -1,0 +1,10 @@
+Visit:
+  http://ps3btc.com
+
+Author:
+  hareesh.nagarajan@gmail.com
+
+Requires:
+  * Google AppEngine
+  * To test the change you'll need to run "dev_appserver.py ps3btc/"
+
