@@ -147,8 +147,9 @@ def do_search(query, html):
   is broken, we jam a 'something is broken' message into the HTML and
   return None. On success we return the dictionary of the search
   results."""
-  
-  url = 'http://search.twitter.com/search.json?q=%s&rpp=100&lang=en' % query
+
+  # TODO(hareesh): &lang=en restricts seems to be broken.
+  url = 'http://search.twitter.com/search.json?q=%s&rpp=100' % query
 
   try:
     handle = urllib2.urlopen(url)
