@@ -111,7 +111,7 @@ def format_text(text):
       url = '<span class="ps3emph"><a class="http" href="%s">%s</a></span>' % (token, url)
       formatted.append(url)
     elif token.find('#') == 0 and len(token) > 1:
-      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, '%s...' % token[:17])
+      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, '%s' % token)
       formatted.append(hashtag)
     else:
       formatted.append('%s' % token[:17])
