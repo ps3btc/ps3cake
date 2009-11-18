@@ -40,7 +40,7 @@ def html_header():
           '<div id="wrap">',
           '<div class="highlight">',
           '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 better than cake</h2>',
-          '<span class="ps3space">crawling twitter for latest ps3 tweets. <a href="/">just hit refresh</a>. <a href="http://twitter.com/hnag">kthxbai</a>',
+          '<p><span class="ps3space">crawling twitter for the latest ps3 tweets. <a href="/">hit reload</a>',
           ]
 
 # </p></div>
@@ -49,9 +49,9 @@ def html_header():
 def html_footer(html):
   """Prepares the HTML footer with Google Analytics, my signature"""
   
-  l = [ '<center><span class="ps3sig">',
+  l = [ '<center><div id="footer">',
         'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a>',
-        '</span></center>',
+        '</div></center>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
         'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/ga.js\' type=\'text/javascript\'%3E%3C/script%3E"));',
@@ -193,7 +193,7 @@ def render_home():
   
   if results:
     (num_results, filtered_results, num_filtered) = filter_results(results)
-    html.append('&nbsp;(supressed %d spammy tweets)' % num_filtered)
+    html.append('&nbsp;(supressed %d spammy tweets)</p>' % num_filtered)
     html.append('</span></div>')
     html.append('<table class="table1">')
     html.append('<tbody>')
