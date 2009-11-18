@@ -49,9 +49,9 @@ def html_header():
 def html_footer(html):
   """Prepares the HTML footer with Google Analytics, my signature"""
   
-  l = [ '<center>',
-        'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a><p/><p/>',
-        '</center>',
+  l = [ '<center><span class="ps3sig">',
+        'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a>',
+        '</span></center>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
         'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/ga.js\' type=\'text/javascript\'%3E%3C/script%3E"));',
@@ -89,7 +89,6 @@ def html_one_tweet(tweet, html, reference_epoch):
   from_user_url = 'http://twitter.com/%s' % (from_user)
   created_at = tweet['created_at']
   image_url = '<img src="%s" width="48px" height="48px" ></img>' % profile_image
-
   url = '<a href="%s">%s</a>' % (from_user_url, image_url)
   time_ago = get_time_ago(reference_epoch, created_at)
   tweet = format_text(text)
@@ -97,15 +96,6 @@ def html_one_tweet(tweet, html, reference_epoch):
   
   html.append('<th class="sub"><td>%s</td><td>%s</td></th>' %
               (url, to_display))
-
-  
-  #html.append('<th class="sub">'
-  #            '<a href="%s">%s'
-  #            '</a>&nbsp;'
-  #            '%s<small>%s</small></th>' % (from_user_url, image_url,
-  #                                           get_time_ago(reference_epoch, created_at),
-  #                                           format_text(text)
-  #                                           ))
 
 
 def format_text(text):
@@ -115,13 +105,16 @@ def format_text(text):
   formatted = []
   for token in text.split():
     if token.find('@') == 0:
-      at = '<span class="ps3emph"><a href="http://twitter.com/%s">%s</a></span>' % (token[1:], token)
+      at = '<span class="ps3emph"><a class="user" href="http://twitter.com/%s">%s</a></span>' % (token[1:], token)
       formatted.append(at)
     elif token.find('http://') == 0:
-      url = '<span class="ps3emph"><a href="%s">%s</a></span>' % (token, token)
+      url = token
+      if len(token) > 21:
+        url = '%s...' % token[:17]
+      url = '<span class="ps3emph"><a class="http" href="%s">%s</a></span>' % (token, url)
       formatted.append(url)
     elif token.find('#') == 0 and len(token) > 1:
-      hashtag = '<span class="ps3emph"><a href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, token)
+      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, token)
       formatted.append(hashtag)
     else:
       formatted.append(token)
