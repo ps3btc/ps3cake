@@ -17,6 +17,8 @@ import sys
 import traceback
 import urllib2
 import wsgiref.handlers
+import calendar
+import time
 
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
@@ -38,7 +40,7 @@ def html_header():
           '<div id="wrap">',
           '<div class="highlight">',
           '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 better than cake</h2>',
-          '<p>crawling twitter for latest ps3 tweets. <a href="/">just hit refresh</a>. <a href="http://twitter.com/hnag">kthxbai</a>',
+          '<span class="ps3space">crawling twitter for latest ps3 tweets. <a href="/">just hit refresh</a>. <a href="http://twitter.com/hnag">kthxbai</a>',
           ]
 
 # </p></div>
@@ -66,16 +68,44 @@ def html_footer(html):
     html.append(i)
 
 
-def html_one_tweet(tweet, html):
+def get_time_ago(reference_epoch, created_at):
+  tww=time.strptime(created_at, '%a, %d %b %Y %H:%M:%S +0000')
+  seconds_ago = int(reference_epoch - calendar.timegm(tww))
+  ret = '%d secs ago' % seconds_ago
+  if seconds_ago > 60 and seconds_ago <= 3600:
+    ret = '%d mins ago' % (seconds_ago / 60)
+  elif seconds_ago > 3600 and seconds_ago <= 86400:
+    ret = '%d hrs ago' % (seconds_ago / 3600)
+  elif seconds_ago > 86400:
+    ret = '%d days ago' % (seconds_ago / 86400)
+
+  return '<span class="date">(%s)</span>' % ret
+    
+
+def html_one_tweet(tweet, html, reference_epoch):
   profile_image = tweet['profile_image_url']
   text = tweet['text']
   from_user = tweet['from_user']
   from_user_url = 'http://twitter.com/%s' % (from_user)
+  created_at = tweet['created_at']
   image_url = '<img src="%s" width="48px" height="48px" ></img>' % profile_image
-  html.append('<th class="sub">'
-            '<a href="%s">%s'
-              '</a>&nbsp;'
-              '<small>%s</small></th>' % (from_user_url, image_url, format_text(text)))
+
+  url = '<a href="%s">%s</a>' % (from_user_url, image_url)
+  time_ago = get_time_ago(reference_epoch, created_at)
+  tweet = format_text(text)
+  to_display = '%s <small>%s</small>' % (time_ago, tweet)
+  
+  html.append('<th class="sub"><td>%s</td><td>%s</td></th>' %
+              (url, to_display))
+
+  
+  #html.append('<th class="sub">'
+  #            '<a href="%s">%s'
+  #            '</a>&nbsp;'
+  #            '%s<small>%s</small></th>' % (from_user_url, image_url,
+  #                                           get_time_ago(reference_epoch, created_at),
+  #                                           format_text(text)
+  #                                           ))
 
 
 def format_text(text):
@@ -85,13 +115,13 @@ def format_text(text):
   formatted = []
   for token in text.split():
     if token.find('@') == 0:
-      at = '<a href="http://twitter.com/%s">%s</a>' % (token[1:], token)
+      at = '<span class="ps3emph"><a href="http://twitter.com/%s">%s</a></span>' % (token[1:], token)
       formatted.append(at)
     elif token.find('http://') == 0:
-      url = '<a href="%s">%s</a>' % (token, token)
+      url = '<span class="ps3emph"><a href="%s">%s</a></span>' % (token, token)
       formatted.append(url)
     elif token.find('#') == 0 and len(token) > 1:
-      hashtag = '<a href="http://search.twitter.com/search?q=%s">%s</a>' % (token, token)
+      hashtag = '<span class="ps3emph"><a href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, token)
       formatted.append(hashtag)
     else:
       formatted.append(token)
@@ -166,18 +196,19 @@ def render_home():
   
   html = html_header()
   results = do_search('ps3', html)
+  reference_epoch = time.time()
   
   if results:
     (num_results, filtered_results, num_filtered) = filter_results(results)
     html.append('&nbsp;(supressed %d spammy tweets)' % num_filtered)
-    html.append('</p></div>')
+    html.append('</span></div>')
     html.append('<table class="table1">')
     html.append('<tbody>')
     html.append('<tr>')
     cnt = 0
     for tweet in filtered_results:
       cnt += 1
-      html_one_tweet(tweet, html)
+      html_one_tweet(tweet, html, reference_epoch)
       if (cnt % 3) == 0:
         html.append('</tr><tr>')
       if cnt == num_results:
