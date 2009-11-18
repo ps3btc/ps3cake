@@ -185,8 +185,8 @@ def filter_results(results):
 
   # 3 columns, so we must modulo 3.
   total_to_display = len(new_results) - (len(new_results) % 3)
-  num_filtered = (len(results) - total_to_display)
-  logging.info('Filtered a total of %d results' % (num_filtered - non_english))
+  num_filtered = (len(results) - total_to_display - non_english)
+  logging.info('Filtered a total of %d results' % num_filtered)
   return (total_to_display, new_results, num_filtered)
 
   
