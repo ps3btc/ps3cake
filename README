@@ -8,3 +8,12 @@ Requires:
   * Google AppEngine
   * To test the change you'll need to run "dev_appserver.py ps3btc/"
 
+
+
+git
+---
+
+0) ... make changes ...
+1) git status
+2) git commit -a
+3) git push origin
