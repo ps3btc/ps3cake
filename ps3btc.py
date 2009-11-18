@@ -133,6 +133,7 @@ def spam(source):
                       'assetize.com',
                       'Twitter Tools',
                       'wp-to-twitter',
+                      'bit.ly',
                       ]
 
   for ign in ignore_sources:
@@ -170,15 +171,22 @@ def filter_results(results):
   display, list of results, number of filtered results)"""
 
   new_results = []
+  non_english = 0
+  
+  # By doing the language restricts here and not in the search, we are
+  # overcounting the non-english queries, so we fix it with the
+  # non_english counter.
   for r in results:
     if not spam(r['source']):
-      new_results.append(r)
+      if r['iso_language_code'] == 'en':
+        new_results.append(r)
+      else:
+        non_english += 1
 
   # 3 columns, so we must modulo 3.
   total_to_display = len(new_results) - (len(new_results) % 3)
   num_filtered = (len(results) - total_to_display)
-  logging.info('Filtered a total of %d results' % num_filtered)
-  
+  logging.info('Filtered a total of %d results' % (num_filtered - non_english))
   return (total_to_display, new_results, num_filtered)
 
   
