@@ -18,16 +18,16 @@ body {padding: 0 0 20px;background: #fff repeat-x 0 100%;color:#333;font:83%/1.5
 /* LINKS */
 a,a:link,a:link,a:link,a:hover {background:transparent;text-decoration:underline;cursor:pointer} 
 
-a.user:link {color:#c00} 
-a.user:visited {color:#999} 
+a.user:link {color:#E55451} 
+a.user:visited {color:#C24641} 
 a.user:hover,a.user:active {color:#069} 
 
 a.hashtag:link {color:#00c} 
 a.hashtag:visited {color:#111} 
 a.hashtag:hover,a.hashtag:active {color:#069} 
 
-a.http:link {color:#0d0} 
-a.http:visited {color:#003} 
+a.http:link {color:#566D7E} 
+a.http:visited {color:#87AFC7} 
 a.http:hover,a.hashtag:active {color:#069} 
 
 /* FORMS */
