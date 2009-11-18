@@ -43,9 +43,6 @@ def html_header():
           '<p><span class="ps3space">crawling twitter for the latest ps3 tweets. <a href="/">hit reload</a>',
           ]
 
-# </p></div>
-
-
 def html_footer(html):
   """Prepares the HTML footer with Google Analytics, my signature"""
   
