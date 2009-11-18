@@ -134,6 +134,9 @@ def spam(source):
                       'Twitter Tools',
                       'wp-to-twitter',
                       'bit.ly',
+                      'allyourtweet.com'
+                      'wordpress',
+                      'alexking.org',
                       ]
 
   for ign in ignore_sources:

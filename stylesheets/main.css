@@ -10,8 +10,8 @@ a.user:hover,a.user:active {color:#069;}
 a.hashtag:link {color:#00c} 
 a.hashtag:visited {color:#111} 
 a.hashtag:hover,a.hashtag:active {color:#069} 
-a.http:link {color:#566D7E} 
-a.http:visited {color:#87AFC7} 
+a.http:link {color:#00c} 
+a.http:visited {color:#111} 
 a.http:hover,a.hashtag:active {color:#069} 
 
 /* TYPOGRAPHY */
