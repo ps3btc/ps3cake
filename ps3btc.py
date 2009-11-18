@@ -102,7 +102,7 @@ def format_text(text):
   formatted = []
   for token in text.split():
     if token.find('@') == 0:
-      at = '<span class="ps3emph"><a class="user" href="http://twitter.com/%s">%s</a></span>' % (token[1:], token)
+      at = '<span class="ps3emph">@<a class="user" href="http://twitter.com/%s">%s</a></span>' % (token[1:], token[1:])
       formatted.append(at)
     elif token.find('http://') == 0:
       url = token
@@ -111,10 +111,10 @@ def format_text(text):
       url = '<span class="ps3emph"><a class="http" href="%s">%s</a></span>' % (token, url)
       formatted.append(url)
     elif token.find('#') == 0 and len(token) > 1:
-      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, token)
+      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, '%s...' % token[:17])
       formatted.append(hashtag)
     else:
-      formatted.append(token)
+      formatted.append('%s' % token[:17])
       
   return ' '.join(formatted)
 
