@@ -20,6 +20,8 @@ import wsgiref.handlers
 import calendar
 import time
 
+import nigga
+
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
 
@@ -85,7 +87,7 @@ def html_one_tweet(tweet, html, reference_epoch):
   from_user = tweet['from_user']
   from_user_url = 'http://twitter.com/%s' % (from_user)
   created_at = tweet['created_at']
-  image_url = '<img src="%s" width="48px" height="48px" ></img>' % profile_image
+  image_url = '<img src="%s" width="32px" height="32px" ></img>' % profile_image
   url = '<a href="%s">%s</a>' % (from_user_url, image_url)
   time_ago = get_time_ago(reference_epoch, created_at)
   tweet = format_text(text)
@@ -100,21 +102,22 @@ def format_text(text):
   links, hashtags and @ addresses"""
   
   formatted = []
-  for token in text.split():
-    if token.find('@') == 0:
-      at = '<span class="ps3emph">@<a class="user" href="http://twitter.com/%s">%s</a></span>' % (token[1:], token[1:])
-      formatted.append(at)
-    elif token.find('http://') == 0:
-      url = token
-      if len(token) > 21:
-        url = '%s...' % token[:17]
-      url = '<span class="ps3emph"><a class="http" href="%s">%s</a></span>' % (token, url)
-      formatted.append(url)
-    elif token.find('#') == 0 and len(token) > 1:
-      hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, '%s' % token)
-      formatted.append(hashtag)
-    else:
-      formatted.append('%s' % token[:17])
+  for token_ in text.split():
+    for token in token_.split('.'):
+      if token.find('@') == 0:
+        at = '<span class="ps3emph">@<a class="user" href="http://twitter.com/%s">%s</a></span>' % (token[1:], token[1:])
+        formatted.append(at)
+      elif token.find('http://') == 0:
+        url = token
+        if len(token) > 21:
+          url = '%s...' % token[:17]
+          url = '<span class="ps3emph"><a class="http" href="%s">%s</a></span>' % (token, url)
+          formatted.append(url)
+      elif token.find('#') == 0 and len(token) > 1:
+        hashtag = '<span class="ps3emph"><a class="hashtag" href="http://search.twitter.com/search?q=%s">%s</a></span>' % (token, '%s' % token)
+        formatted.append(hashtag)
+      else:
+        formatted.append('%s' % token[:17])
       
   return ' '.join(formatted)
 
@@ -193,46 +196,123 @@ def filter_results(results):
   logging.info('Filtered a total of %d results' % num_filtered)
   return (total_to_display, new_results, num_filtered)
 
+def just_show_image(tweet):
+  profile_image = tweet['profile_image_url']
+  from_user = tweet['from_user']
+  from_user_url = 'http://twitter.com/%s' % (from_user)
+  return ('<a title="%s" href="%s"><img alt="%s" border=0 width=48px height=48px src="%s"></a>'
+          % (from_user, from_user_url, from_user,  profile_image))
+
+def get_hot_hashtags(results):
+  hashtags = {}
+  for tweet in results:
+    text = tweet['text'].lower()
+    for token_ in text.split():
+      for token in token_.split('.'):
+        if token.find('#') == 0 and len(token) > 1:
+          if hashtags.has_key(token):
+            hashtags[token] += 1
+          else:
+            hashtags[token] = 1
+
+  inv = {}
+  for k, v in hashtags.iteritems():
+    inv[v] = inv.get(v, [])
+    inv[v].append(k)
+
+  counts = inv.keys()
+  counts.sort()
+  counts.reverse()
   
-def render_home():
+  html = []
+  for count in counts:
+    for hashtag in inv[count]:
+      just_tag = hashtag[1:]
+      if just_tag.isalpha():
+        css_tag='hashtag3'
+        if count >= 10:
+          css_tag='hashtag1'
+        elif count >=5 and count < 10:
+          css_tag='hashtag2'
+        logging.info('final %d %s' % (count, css_tag))
+        html.append('<span class="%s"><a class="%s" href="http://search.twitter.com/search?q=%s">%s (%d)</a></span>&nbsp;' %
+                    (css_tag, css_tag, hashtag, hashtag, hashtags[hashtag]))
+  
+  return html
+  
+def render_home(html, query):
   """Render the all important home page, with the tweets and all that."""
+
+  header = html
   
-  html = html_header()
-  results = do_search('ps3', html)
-  reference_epoch = time.time()
-  
-  if results:
-    (num_results, filtered_results, num_filtered) = filter_results(results)
-    html.append('&nbsp;(supressed %d spammy tweets)</p>' % num_filtered)
-    html.append('</span></div>')
-    html.append('<table class="table1">')
-    html.append('<tbody>')
-    html.append('<tr>')
-    cnt = 0
-    for tweet in filtered_results:
-      cnt += 1
-      html_one_tweet(tweet, html, reference_epoch)
-      if (cnt % 3) == 0:
-        html.append('</tr><tr>')
-      if cnt == num_results:
-        html.append('</tbody></table>')
-        break
-      
-  html_footer(html)
-  payload = '\n'.join(html)
-  return payload.encode('ascii', 'ignore')
+  try:
+    results = do_search(query, html)
+    reference_epoch = time.time()
+    if results:
+      (num_results, filtered_results, num_filtered) = filter_results(results)
+      html.append('&nbsp;(supressed %d spammy tweets)</p>' % num_filtered)
+      html.append('</span></div>')
+
+      # Generate block of photos
+      html.append('<table class="table1">')
+      for tweet in filtered_results:
+        html.append(just_show_image(tweet))
+      html.append('</table>')
+
+      # Generate hot tags
+      html.append('<table class="table1">')
+      for tag in get_hot_hashtags(filtered_results):
+        html.append(tag)
+      html.append('</table>')
+
+      html.append('<table class="table1">')
+      html.append('<tbody>')
+      html.append('<tr>')
+      cnt = 0
+      for tweet in filtered_results:
+        cnt += 1
+        html_one_tweet(tweet, html, reference_epoch)
+        if (cnt % 3) == 0:
+          html.append('</tr><tr>')
+          if cnt == num_results:
+            html.append('</tbody></table>')
+            break
+      html_footer(html)
+      payload = '\n'.join(html)
+      return payload.encode('ascii', 'ignore')
+  except Exception, e:
+    s = StringIO.StringIO()
+    traceback.print_exc(file=s)
+    logging.error('Oops: %s', s.getvalue())
+    html = header
+    html.append('<center><h3>Oh noes! something is br0ken.'
+                ' hit refresh?</h3></center>')
+    html_footer(html)
+    payload = '\n'.join(html)
+    return payload.encode('ascii', 'ignore')
 
                 
-class MainHandler(webapp.RequestHandler):
-  """A main handler for our little webserver."""
+class Ps3Handler(webapp.RequestHandler):
+  """A / (ps3) handler for our little webserver."""
   
   def get(self):
-    self.response.out.write(render_home())
+    html = html_header()
+    self.response.out.write(render_home(html, 'ps3'))
+
+
+class NiggaHandler(webapp.RequestHandler):
+  """A /nigga handler for our little webserver."""
+  
+  def get(self):
+    html = nigga.html_header()
+    self.response.out.write(render_home(html, 'nigga'))
 
     
 def main():
-  application = webapp.WSGIApplication([('/', MainHandler)],
-                                       debug=True)
+  application = webapp.WSGIApplication([
+      ('/', Ps3Handler),
+      ('/n', NiggaHandler),
+      ], debug=True)
   wsgiref.handlers.CGIHandler().run(application)
 
 
