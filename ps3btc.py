@@ -181,10 +181,11 @@ def filter_results(results):
   # non_english counter.
   for r in results:
     if not spam(r['source']):
-      if r['iso_language_code'] == 'en':
-        new_results.append(r)
-      else:
-        non_english += 1
+      if r.has_key('iso_language_code'):
+        if r['iso_language_code'] == 'en':
+          new_results.append(r)
+        else:
+          non_english += 1
 
   # 3 columns, so we must modulo 3.
   total_to_display = len(new_results) - (len(new_results) % 3)
