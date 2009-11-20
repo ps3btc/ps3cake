@@ -10,9 +10,9 @@ To push: appcfg.py update ps3btc/
 
 __author__ = 'hareesh.nagarajan@gmail.com (Hareesh Nagarajan)'
 
-
 import StringIO
 import logging
+import sets
 import sys
 import traceback
 import urllib2
@@ -33,7 +33,7 @@ def html_header():
 
   return ['<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">',
           '<head><link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />',
-          '<title>#ps3btc ps3 better than cake</title>',
+          '<title>#ps3btc ps3 tweets (ps3 better than cake)</title>',
           '<meta name="google-site-verification" content="3Y6C1jgWitOJoAcYuHQWva_lKFwMNDVD2MxlKC9TCE0" />',
           '<meta name="description" content="ps3betterthankcake - crawling twitter for latest ps3 tweets">',
           '<meta name="keywords" content="ps3 twitter, ps3 tweets, twitter mashup, twitter apps, ps3, video games, sony, playstation, playstation3, tweets">',
@@ -41,7 +41,7 @@ def html_header():
           '<body>',
           '<div id="wrap">',
           '<div class="highlight">',
-          '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 better than cake</h2>',
+          '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 tweets (ps3 better than cake)</h2>',
           '<p><span class="ps3space">crawling twitter for the latest ps3 tweets. <a href="/">hit reload</a>',
           ]
 
@@ -49,7 +49,10 @@ def html_footer(html):
   """Prepares the HTML footer with Google Analytics, my signature"""
   
   l = [ '<center><div id="footer">',
-        'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a>',
+        '<a href="/">#ps3btc</a>&nbsp;&nbsp;'
+        '<a href="/n">#what?</a><p/>'
+        'Copyright &copy; 2009 <a href="http://linkybinky.appspot.com">linkybinky</a> effective twitter targetting<p/>'
+        #'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a>',
         '</div></center>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
@@ -203,6 +206,21 @@ def just_show_image(tweet):
   return ('<a title="%s" href="%s"><img alt="%s" border=0 width=48px height=48px src="%s"></a>'
           % (from_user, from_user_url, from_user,  profile_image))
 
+def get_images(results):
+  image_list = []
+  for tweet in results:
+    profile_image = tweet['profile_image_url']
+    # Do not show the image, if the user does not have a profile
+    # picture.
+    if profile_image.find('default_profile_') == -1:
+      from_user = tweet['from_user']
+      from_user_url = 'http://twitter.com/%s' % (from_user)
+      image_list.append('<a title="%s" href="%s"><img alt="%s" border=0 width=48px height=48px src="%s"></a>'
+                        % (from_user, from_user_url, from_user,  profile_image))
+    
+  # Do this to remove dupe images
+  return list(sets.Set(image_list))
+
 def get_hot_hashtags(results):
   hashtags = {}
   for tweet in results:
@@ -225,19 +243,19 @@ def get_hot_hashtags(results):
   counts.reverse()
   
   html = []
+  html.append('<span class="hashtagspace">')
   for count in counts:
     for hashtag in inv[count]:
       just_tag = hashtag[1:]
-      if just_tag.isalpha():
+      if just_tag.isalnum():
         css_tag='hashtag3'
         if count >= 10:
           css_tag='hashtag1'
         elif count >=5 and count < 10:
           css_tag='hashtag2'
-        logging.info('final %d %s' % (count, css_tag))
         html.append('<span class="%s"><a class="%s" href="http://search.twitter.com/search?q=%s">%s (%d)</a></span>&nbsp;' %
                     (css_tag, css_tag, hashtag, hashtag, hashtags[hashtag]))
-  
+  html.append('</span>')
   return html
   
 def render_home(html, query):
@@ -255,8 +273,8 @@ def render_home(html, query):
 
       # Generate block of photos
       html.append('<table class="table1">')
-      for tweet in filtered_results:
-        html.append(just_show_image(tweet))
+      for image in get_images(filtered_results):
+        html.append(image)
       html.append('</table>')
 
       # Generate hot tags
