@@ -243,7 +243,7 @@ def get_hot_hashtags(results):
   counts.reverse()
   
   html = []
-  html.append('<span class="hashtagspace">')
+  #html.append('<span class="hashtagspace">')
   for count in counts:
     for hashtag in inv[count]:
       just_tag = hashtag[1:]
@@ -255,7 +255,7 @@ def get_hot_hashtags(results):
           css_tag='hashtag2'
         html.append('<span class="%s"><a class="%s" href="http://search.twitter.com/search?q=%s">%s (%d)</a></span>&nbsp;' %
                     (css_tag, css_tag, hashtag, hashtag, hashtags[hashtag]))
-  html.append('</span>')
+  #html.append('</span>')
   return html
   
 def render_home(html, query):
