@@ -21,6 +21,8 @@ import calendar
 import time
 
 import nigga
+import xbox
+import wii
 
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
@@ -50,9 +52,12 @@ def html_footer(html):
   
   l = [ '<center><div id="footer">',
         '<a href="/">#ps3btc</a>&nbsp;&nbsp;'
-        '<a href="/n">#what?</a><p/>'
-        'Copyright &copy; 2009 <a href="http://linkybinky.appspot.com">linkybinky</a> effective twitter targetting<p/>'
-        #'Copyright &copy; 2009 <a href="http://twitter.com/hnag">Hareesh Nagarajan</a>',
+        '<a href="/wii">#wii</a>&nbsp;&nbsp;'
+        '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
+        '<p/>'
+        '<a href="/n">#niggawhat?</a>&nbsp;&nbsp;'
+        '<p/>',
+        'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009'
         '</div></center>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
@@ -243,7 +248,6 @@ def get_hot_hashtags(results):
   counts.reverse()
   
   html = []
-  #html.append('<span class="hashtagspace">')
   for count in counts:
     for hashtag in inv[count]:
       just_tag = hashtag[1:]
@@ -255,7 +259,6 @@ def get_hot_hashtags(results):
           css_tag='hashtag2'
         html.append('<span class="%s"><a class="%s" href="http://search.twitter.com/search?q=%s">%s (%d)</a></span>&nbsp;' %
                     (css_tag, css_tag, hashtag, hashtag, hashtags[hashtag]))
-  #html.append('</span>')
   return html
   
 def render_home(html, query):
@@ -325,11 +328,27 @@ class NiggaHandler(webapp.RequestHandler):
     html = nigga.html_header()
     self.response.out.write(render_home(html, 'nigga'))
 
+class WiiHandler(webapp.RequestHandler):
+  """A /wii handler for our little webserver."""
+  
+  def get(self):
+    html = wii.html_header()
+    self.response.out.write(render_home(html, 'wii'))
+
+class XboxHandler(webapp.RequestHandler):
+  """A /xbox handler for our little webserver."""
+  
+  def get(self):
+    html = xbox.html_header()
+    self.response.out.write(render_home(html, 'xbox'))
+
     
 def main():
   application = webapp.WSGIApplication([
       ('/', Ps3Handler),
       ('/n', NiggaHandler),
+      ('/wii', WiiHandler),
+      ('/xbox', XboxHandler),
       ], debug=True)
   wsgiref.handlers.CGIHandler().run(application)
 
