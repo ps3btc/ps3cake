@@ -44,20 +44,24 @@ def html_header():
           '<div id="wrap">',
           '<div class="highlight">',
           '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 tweets (ps3 better than cake)</h2>',
-          '<p><span class="ps3space">crawling twitter for the latest ps3 tweets. <a href="/">hit reload</a>',
+          '<p><span class="ps3space">crawling twitter for the latest ps3 tweets.',
+          '(<a href="/">#ps3</a>&nbsp;&nbsp;'
+          '<a href="/wii">#wii</a>&nbsp;&nbsp;'
+          '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
+          '<a href="/n">#niggawhat?</a>)'
           ]
 
 def html_footer(html):
   """Prepares the HTML footer with Google Analytics, my signature"""
   
   l = [ '<center><div id="footer">',
-        '<a href="/">#ps3btc</a>&nbsp;&nbsp;'
+        '<a href="/">#ps3</a>&nbsp;&nbsp;'
         '<a href="/wii">#wii</a>&nbsp;&nbsp;'
         '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-        '<p/>'
         '<a href="/n">#niggawhat?</a>&nbsp;&nbsp;'
-        '<p/>',
-        'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009'
+        '<p/><br>',
+        'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
+        '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
         '</div></center>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
@@ -148,6 +152,7 @@ def spam(source):
                       'allyourtweet.com'
                       'wordpress',
                       'alexking.org',
+                      'bravenewcode.com',
                       ]
 
   for ign in ignore_sources:
@@ -279,6 +284,9 @@ def render_home(html, query):
       for image in get_images(filtered_results):
         html.append(image)
       html.append('</table>')
+      
+      # Generate share links
+      html.append('<p><a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share on facebook</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script></p>')
 
       # Generate hot tags
       html.append('<table class="table1">')

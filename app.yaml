@@ -11,6 +11,10 @@ handlers:
   static_files: static/favicon.ico
   upload: static/favicon.ico
 
+- url: /static/powered-by-twitter-sig.gif
+  static_files: static/powered-by-twitter-sig.gif
+  upload: static/powered-by-twitter-sig.gif
+
 - url: /robots.txt
   static_files: static/robots.txt
   upload: static/robots.txt

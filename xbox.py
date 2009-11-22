@@ -17,5 +17,9 @@ def html_header():
           '<div id="wrap">',
           '<div class="highlight">',
           '<h2><a href="/n">#xbox</a> tweets</h2>',
-          '<p><span class="ps3space">crawling twitter for latest tweets with word <b>xbox</b> in them. <a href="/n">hit reload</a>',
+          '<p><span class="ps3space">crawling twitter for latest tweets with word <b>xbox</b> in them.',
+          '(<a href="/">#ps3</a>&nbsp;&nbsp;'
+          '<a href="/wii">#wii</a>&nbsp;&nbsp;'
+          '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
+          '<a href="/n">#niggawhat?</a>)'
           ]
