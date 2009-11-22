@@ -322,8 +322,8 @@ class Ps3Handler(webapp.RequestHandler):
   """A / (ps3) handler for our little webserver."""
   
   def get(self):
-    html = html_header('#ps3btc ps3 tweets as the ps3 is better than cake)',
-                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 tweets as the ps3 is better than cake',
+    html = html_header('#ps3btc ps3 tweets; as the ps3 is better than cake',
+                       '<a href="/">#ps3btc</a> ps3 tweets; since the ps3 is better than cake',
                        'crawling twitter for the latest ps3 tweets.')
     self.response.out.write(render_home(html, 'ps3'))
 
@@ -333,7 +333,7 @@ class NiggaHandler(webapp.RequestHandler):
   
   def get(self):
     html = html_header('#ps3btc nigga what?',
-                       '<a href="http://twitter.com/ps3btc">#nigga</a> what?',
+                       '<a href="/">#nigga</a> what?',
                        'crawling twitter for tweets with the word nigga in them')
     self.response.out.write(render_home(html, 'nigga'))
 
@@ -341,8 +341,8 @@ class WiiHandler(webapp.RequestHandler):
   """A /wii handler for our little webserver."""
   
   def get(self):
-    html = html_header('#ps3btc wii tweets (can the wii be better than cake?)',
-                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> can the wii be better than cake?',
+    html = html_header('#ps3btc wii tweets; can the wii be better than cake?',
+                       '<a href="/">#ps3btc</a> wii tweets; can the wii be better than cake?',
                        'crawling twitter for the latest wii tweets.')
     self.response.out.write(render_home(html, 'wii'))
 
@@ -350,8 +350,8 @@ class XboxHandler(webapp.RequestHandler):
   """A /xbox handler for our little webserver."""
   
   def get(self):
-    html = html_header('#ps3btc xbox tweets (can the xbox be better than cake?)',
-                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> can the xbox be better than cake?',
+    html = html_header('#ps3btc xbox tweets; can the xbox be better than cake?',
+                       '<a href="/">#ps3btc</a> xbox tweets; can the xbox be better than cake?',
                        'crawling twitter for the latest xbox tweets.')
     self.response.out.write(render_home(html, 'xbox'))
 
