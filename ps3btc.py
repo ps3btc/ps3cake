@@ -20,35 +20,32 @@ import wsgiref.handlers
 import calendar
 import time
 
-import nigga
-import xbox
-import wii
-
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
 
-
-def html_header():
+def html_header(title, header, body):
   """Prepares the HTML header for serving the home page. Returns a
   list of the HTML. The CSS has been inspired from mollio.org and is
   under the Creative Commons License."""
 
   return ['<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">',
           '<head><link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />',
-          '<title>#ps3btc ps3 tweets (ps3 better than cake)</title>',
+          '<title>%s</title>' % title,
           '<meta name="google-site-verification" content="3Y6C1jgWitOJoAcYuHQWva_lKFwMNDVD2MxlKC9TCE0" />',
-          '<meta name="description" content="ps3betterthankcake - crawling twitter for latest ps3 tweets">',
-          '<meta name="keywords" content="ps3 twitter, ps3 tweets, twitter mashup, twitter apps, ps3, video games, sony, playstation, playstation3, tweets">',
+          '<meta name="description" content="ps3btc - ps3 better than cake crawling twitter for latest ps3, xbox, wii tweets">',
+          '<meta name="keywords" content="ps3 twitter, ps3 tweets, wii tweets, xbox tweets, twitter mashup, twitter apps, '
+          'ps3, wii, xbox, xbox 360, video games, sony, playstation, playstation3, tweets">',
           '</head>',
           '<body>',
           '<div id="wrap">',
           '<div class="highlight">',
-          '<h2><a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 tweets (ps3 better than cake)</h2>',
-          '<p><span class="ps3space">crawling twitter for the latest ps3 tweets.',
-          '(<a href="/">#ps3</a>&nbsp;&nbsp;'
+          '<h2>%s</h2>' % header,
+          '<span class="ps3space">%s</span>' % body,
+          '<p>',
+          '<span class="ps3space"><a href="/">#ps3</a>&nbsp;&nbsp;'
           '<a href="/wii">#wii</a>&nbsp;&nbsp;'
           '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-          '<a href="/n">#niggawhat?</a>)'
+          '<a href="/n">#niggawhat?</a></span>'
           ]
 
 def html_footer(html):
@@ -99,7 +96,7 @@ def html_one_tweet(tweet, html, reference_epoch):
   from_user = tweet['from_user']
   from_user_url = 'http://twitter.com/%s' % (from_user)
   created_at = tweet['created_at']
-  image_url = '<img src="%s" width="32px" height="32px" ></img>' % profile_image
+  image_url = '<img src="%s" width="48x" height="48px" ></img>' % profile_image
   url = '<a href="%s">%s</a>' % (from_user_url, image_url)
   time_ago = get_time_ago(reference_epoch, created_at)
   tweet = format_text(text)
@@ -276,20 +273,20 @@ def render_home(html, query):
     reference_epoch = time.time()
     if results:
       (num_results, filtered_results, num_filtered) = filter_results(results)
-      html.append('&nbsp;(supressed %d spammy tweets)</p>' % num_filtered)
-      html.append('</span></div>')
+      html.append('<span class="ps3space">(supressed <b>%d</b> spammy tweets)</span></p>' % num_filtered)
+      html.append('</div>')
+
+      # Generate share links
+      html.append('<p><span class="ps3space"><a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share on facebook</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script></span></p>')
 
       # Generate block of photos
-      html.append('<table class="table1">')
+      html.append('<table>')
       for image in get_images(filtered_results):
         html.append(image)
       html.append('</table>')
-      
-      # Generate share links
-      html.append('<p><a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share on facebook</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script></p>')
 
       # Generate hot tags
-      html.append('<table class="table1">')
+      html.append('<table>')
       for tag in get_hot_hashtags(filtered_results):
         html.append(tag)
       html.append('</table>')
@@ -325,7 +322,9 @@ class Ps3Handler(webapp.RequestHandler):
   """A / (ps3) handler for our little webserver."""
   
   def get(self):
-    html = html_header()
+    html = html_header('#ps3btc ps3 tweets as the ps3 is better than cake)',
+                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> ps3 tweets as the ps3 is better than cake',
+                       'crawling twitter for the latest ps3 tweets.')
     self.response.out.write(render_home(html, 'ps3'))
 
 
@@ -333,21 +332,27 @@ class NiggaHandler(webapp.RequestHandler):
   """A /nigga handler for our little webserver."""
   
   def get(self):
-    html = nigga.html_header()
+    html = html_header('#ps3btc nigga what?',
+                       '<a href="http://twitter.com/ps3btc">#nigga</a> what?',
+                       'crawling twitter for tweets with the word nigga in them')
     self.response.out.write(render_home(html, 'nigga'))
 
 class WiiHandler(webapp.RequestHandler):
   """A /wii handler for our little webserver."""
   
   def get(self):
-    html = wii.html_header()
+    html = html_header('#ps3btc wii tweets (can the wii be better than cake?)',
+                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> can the wii be better than cake?',
+                       'crawling twitter for the latest wii tweets.')
     self.response.out.write(render_home(html, 'wii'))
 
 class XboxHandler(webapp.RequestHandler):
   """A /xbox handler for our little webserver."""
   
   def get(self):
-    html = xbox.html_header()
+    html = html_header('#ps3btc xbox tweets (can the xbox be better than cake?)',
+                       '<a href="http://twitter.com/ps3btc">#ps3btc</a> can the xbox be better than cake?',
+                       'crawling twitter for the latest xbox tweets.')
     self.response.out.write(render_home(html, 'xbox'))
 
     
