@@ -46,7 +46,7 @@ def html_header(title, header, body):
           '<span class="ps3space"><a href="/">#ps3</a>&nbsp;&nbsp;'
           '<a href="/wii">#wii</a>&nbsp;&nbsp;'
           '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-          '<a href="/n">#what?</a></span>'
+          '<a href="/n">#what</a></span>'
           ]
 
 def html_footer(html):
@@ -56,7 +56,7 @@ def html_footer(html):
         '<a href="/">#ps3</a>&nbsp;&nbsp;'
         '<a href="/wii">#wii</a>&nbsp;&nbsp;'
         '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-        '<a href="/n">#what?</a>&nbsp;&nbsp;'
+        '<a href="/n">#what</a>'
         '<p/><br>',
         'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
@@ -168,18 +168,9 @@ def do_search(query, html):
 
   # TODO(hareesh): &lang=en restricts seems to be broken.
   url = 'http://search.twitter.com/search.json?q=%s&rpp=100' % query
-
-  try:
-    handle = urllib2.urlopen(url)
-    data = json.loads(handle.read())
-    return data['results']
-  except Exception, e:
-    html.append('<center><h3>Oh noes! something is br0ken.'
-                ' hit refresh?</h3></center>')
-    s = StringIO.StringIO()
-    traceback.print_exc(file=s)
-    logging.error('Oops: %s', s.getvalue())
-    return None
+  handle = urllib2.urlopen(url)
+  data = json.loads(handle.read())
+  return data['results']
 
 
 def filter_results(results):
@@ -204,7 +195,6 @@ def filter_results(results):
   # 3 columns, so we must modulo 3.
   total_to_display = len(new_results) - (len(new_results) % 3)
   num_filtered = (len(results) - total_to_display - non_english)
-  logging.info('Filtered a total of %d results' % num_filtered)
   return (total_to_display, new_results, num_filtered)
 
 def just_show_image(tweet):
@@ -268,50 +258,53 @@ def render_home(html, query):
   """Render the all important home page, with the tweets and all that."""
 
   header = html
-  
   try:
     results = do_search(query, html)
-    if results:
-      reference_epoch = time.time()
-      (num_results, filtered_results, num_filtered) = filter_results(results)
-      html.append('<span class="ps3space">(supressed <b>%d</b> spammy tweets)</span></p>' % num_filtered)
-      html.append('</div>')
+    reference_epoch = time.time()
+    (num_results, filtered_results, num_filtered) = filter_results(results)
+    logging.info('Filtered a total of %d results for query %s' % (num_filtered, query))
+    html.append('<i>supressed <b>%d</b> spammy tweets</i>' % num_filtered)
+    html.append('</div>')
+    
+    # Generate share links
+    html.append('<p><a name="fb_share" type="button_count"'
+                ' href="http://www.facebook.com/sharer.php">Share on facebook</a>'
+                '<script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share"'
+                ' type="text/javascript"></script></p>')
+    
+    # Generate block of photos
+    html.append('<table>')
+    for image in get_images(filtered_results):
+      html.append(image)
+    html.append('</table>')
 
-      # Generate share links
-      html.append('<p><span class="ps3space"><a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share on facebook</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script></span></p>')
+    # Generate hot tags
+    html.append('<table>')
+    for tag in get_hot_hashtags(filtered_results):
+      html.append(tag)
+    html.append('</table>')
 
-      # Generate block of photos
-      html.append('<table>')
-      for image in get_images(filtered_results):
-        html.append(image)
-      html.append('</table>')
-
-      # Generate hot tags
-      html.append('<table>')
-      for tag in get_hot_hashtags(filtered_results):
-        html.append(tag)
-      html.append('</table>')
-
-      html.append('<table class="table1">')
-      html.append('<tbody>')
-      html.append('<tr>')
-      cnt = 0
-      for tweet in filtered_results:
-        cnt += 1
-        html_one_tweet(tweet, html, reference_epoch)
-        if (cnt % 3) == 0:
-          html.append('</tr><tr>')
-          if cnt == num_results:
-            html.append('</tbody></table>')
-            break
-      html_footer(html)
-      payload = '\n'.join(html)
-      payload_encoded = payload.encode('ascii', 'ignore')
-      memcache.add(query, payload_encoded, 86400)
-      return payload_encoded
+    html.append('<table class="table1">')
+    html.append('<tbody>')
+    html.append('<tr>')
+    cnt = 0
+    for tweet in filtered_results:
+      cnt += 1
+      html_one_tweet(tweet, html, reference_epoch)
+      if (cnt % 3) == 0:
+        html.append('</tr><tr>')
+        if cnt == num_results:
+          html.append('</tbody></table>')
+          break
+    html_footer(html)
+    payload = '\n'.join(html)
+    payload_encoded = payload.encode('ascii', 'ignore')
+    memcache.add(query, payload_encoded, 86400)
+    logging.info('Adding to memcache (%s length: %d)' % (query, len(payload_encoded)))
+    return payload_encoded
   except Exception, e:
+    # Return the page, if it exists in the cache.
     payload = memcache.get(query)
-    # We will usually be here on a DownloadError returned by UrlFetch
     if payload is not None:
       stats = memcache.get_stats()
       logging.info('Hit memcache. Hits (%d) Misses (%d)' % (stats['hits'], stats['misses']))
