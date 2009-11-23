@@ -22,6 +22,7 @@ import time
 
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
+from google.appengine.api import memcache
 
 def html_header(title, header, body):
   """Prepares the HTML header for serving the home page. Returns a
@@ -45,7 +46,7 @@ def html_header(title, header, body):
           '<span class="ps3space"><a href="/">#ps3</a>&nbsp;&nbsp;'
           '<a href="/wii">#wii</a>&nbsp;&nbsp;'
           '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-          '<a href="/n">#niggawhat?</a></span>'
+          '<a href="/n">#what?</a></span>'
           ]
 
 def html_footer(html):
@@ -55,7 +56,7 @@ def html_footer(html):
         '<a href="/">#ps3</a>&nbsp;&nbsp;'
         '<a href="/wii">#wii</a>&nbsp;&nbsp;'
         '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-        '<a href="/n">#niggawhat?</a>&nbsp;&nbsp;'
+        '<a href="/n">#what?</a>&nbsp;&nbsp;'
         '<p/><br>',
         'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
@@ -270,8 +271,8 @@ def render_home(html, query):
   
   try:
     results = do_search(query, html)
-    reference_epoch = time.time()
     if results:
+      reference_epoch = time.time()
       (num_results, filtered_results, num_filtered) = filter_results(results)
       html.append('<span class="ps3space">(supressed <b>%d</b> spammy tweets)</span></p>' % num_filtered)
       html.append('</div>')
@@ -305,18 +306,26 @@ def render_home(html, query):
             break
       html_footer(html)
       payload = '\n'.join(html)
-      return payload.encode('ascii', 'ignore')
+      payload_encoded = payload.encode('ascii', 'ignore')
+      memcache.add(query, payload_encoded, 86400)
+      return payload_encoded
   except Exception, e:
-    s = StringIO.StringIO()
-    traceback.print_exc(file=s)
-    logging.error('Oops: %s', s.getvalue())
-    html = header
-    html.append('<center><h3>Oh noes! something is br0ken.'
-                ' hit refresh?</h3></center>')
-    html_footer(html)
-    payload = '\n'.join(html)
-    return payload.encode('ascii', 'ignore')
-
+    payload = memcache.get(query)
+    # We will usually be here on a DownloadError returned by UrlFetch
+    if payload is not None:
+      stats = memcache.get_stats()
+      logging.info('Hit memcache. Hits (%d) Misses (%d)' % (stats['hits'], stats['misses']))
+      return payload
+    else:
+      html = header
+      html.append('<center><h3>Oh noes! something is br0ken.'
+                  ' hit refresh?</h3></center>')
+      html_footer(html)
+      payload = '\n'.join(html)
+      s = StringIO.StringIO()
+      traceback.print_exc(file=s)
+      logging.error('Oops: %s', s.getvalue())
+      return payload.encode('ascii', 'ignore')
                 
 class Ps3Handler(webapp.RequestHandler):
   """A / (ps3) handler for our little webserver."""
