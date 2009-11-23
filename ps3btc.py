@@ -46,7 +46,11 @@ def html_header(title, header, body):
           '<span class="ps3space"><a href="/">#ps3</a>&nbsp;&nbsp;'
           '<a href="/wii">#wii</a>&nbsp;&nbsp;'
           '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-          '<a href="/n">#what</a></span>'
+          '<a href="/n">#what</a>&nbsp;&nbsp;'
+          '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
+          '<a href="/omg">#omg</a>&nbsp;&nbsp;'
+          '<a href="/fuck">#fuck</a>'
+          '</span>'
           ]
 
 def html_footer(html):
@@ -56,7 +60,10 @@ def html_footer(html):
         '<a href="/">#ps3</a>&nbsp;&nbsp;'
         '<a href="/wii">#wii</a>&nbsp;&nbsp;'
         '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-        '<a href="/n">#what</a>'
+        '<a href="/n">#what</a>&nbsp;&nbsp;'
+        '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
+        '<a href="/omg">#omg</a>&nbsp;&nbsp;'
+        '<a href="/fuck">#fuck</a>'
         '<p/><br>',
         'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
@@ -357,6 +364,31 @@ class XboxHandler(webapp.RequestHandler):
                        'crawling twitter for the latest xbox tweets.')
     self.response.out.write(render_home(html, 'xbox'))
 
+
+class OmgHandler(webapp.RequestHandler):
+  def get(self):
+    html = html_header('#ps3btc omg tweets; who is tweeting the word omg?',
+                       '<a href="/">#ps3btc</a> omg tweets; who is tweeting the word omg?',
+                       'crawling twitter for the latest omg tweets.')
+    self.response.out.write(render_home(html, 'omg'))
+
+
+class WtfHandler(webapp.RequestHandler):
+  def get(self):
+    html = html_header('#ps3btc wtf tweets; who is tweeting the word wtf?',
+                       '<a href="/">#ps3btc</a> wtf tweets; who is tweeting the word wtf?',
+                       'crawling twitter for the latest wtf tweets.')
+    self.response.out.write(render_home(html, 'wtf'))
+
+
+class FuckHandler(webapp.RequestHandler):
+  def get(self):
+    html = html_header('#ps3btc fuck tweets; who is tweeting the word fuck?',
+                       '<a href="/">#ps3btc</a> fuck tweets; who is tweeting the word fuck?',
+                       'crawling twitter for the latest fuck tweets.')
+    self.response.out.write(render_home(html, 'fuck'))
+
+
     
 def main():
   application = webapp.WSGIApplication([
@@ -364,6 +396,9 @@ def main():
       ('/n', NiggaHandler),
       ('/wii', WiiHandler),
       ('/xbox', XboxHandler),
+      ('/omg', OmgHandler),
+      ('/wtf', WtfHandler),
+      ('/fuck', FuckHandler),
       ], debug=True)
   wsgiref.handlers.CGIHandler().run(application)
 
