@@ -307,7 +307,7 @@ def render_home(html, query):
     payload = memcache.get(query)
     if payload is not None:
       stats = memcache.get_stats()
-      logging.info('Hit memcache. Hits (%d) Misses (%d)' % (stats['hits'], stats['misses']))
+      logging.info('Hit memcache! Query (%s) Hits (%d) Misses (%d)' % (query, stats['hits'], stats['misses']))
       return payload
     else:
       html = header
