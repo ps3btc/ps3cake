@@ -49,7 +49,8 @@ def html_header(title, header, body):
           '<a href="/n">#what</a>&nbsp;&nbsp;'
           '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
           '<a href="/omg">#omg</a>&nbsp;&nbsp;'
-          '<a href="/fuck">#fuck</a>'
+          '<a href="/fuck">#fuck</a>&nbsp;&nbsp;'
+          '<a href="/cancer">#cancer</a>&nbsp;&nbsp;'
           '</span>'
           ]
 
@@ -63,7 +64,8 @@ def html_footer(html):
         '<a href="/n">#what</a>&nbsp;&nbsp;'
         '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
         '<a href="/omg">#omg</a>&nbsp;&nbsp;'
-        '<a href="/fuck">#fuck</a>'
+        '<a href="/fuck">#fuck</a>&nbsp;&nbsp;'
+        '<a href="/cancer">#cancer</a>'
         '<p/><br>',
         'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
@@ -195,9 +197,10 @@ def filter_results(results):
     if not spam(r['source']):
       if r.has_key('iso_language_code'):
         if r['iso_language_code'] == 'en':
-          new_results.append(r)
-        else:
-          non_english += 1
+          if r['text'].find('RT') == -1:
+            new_results.append(r)
+          else:
+            non_english += 1
 
   # 3 columns, so we must modulo 3.
   total_to_display = len(new_results) - (len(new_results) % 3)
@@ -340,7 +343,7 @@ class Ps3Handler(webapp.RequestHandler):
 class NiggaHandler(webapp.RequestHandler):
   """A /nigga handler for our little webserver."""
   
-  def get(self):
+  def get(self, link=None):
     html = html_header('#ps3btc nigga what?',
                        '<a href="/">#nigga</a> what?',
                        'crawling twitter for tweets with the word nigga in them')
@@ -374,7 +377,7 @@ class OmgHandler(webapp.RequestHandler):
 
 
 class WtfHandler(webapp.RequestHandler):
-  def get(self):
+  def get(self, link=None):
     html = html_header('#ps3btc wtf tweets; who is tweeting the word wtf?',
                        '<a href="/">#ps3btc</a> wtf tweets; who is tweeting the word wtf?',
                        'crawling twitter for the latest wtf tweets.')
@@ -389,6 +392,14 @@ class FuckHandler(webapp.RequestHandler):
     self.response.out.write(render_home(html, 'fuck'))
 
 
+class CancerHandler(webapp.RequestHandler):
+  def get(self):
+    html = html_header('#ps3btc cancer tweets; who is tweeting the word cancer?',
+                       '<a href="/">#ps3btc</a> cancer tweets; who is tweeting the word cancer?',
+                       'crawling twitter for the latest cancer tweets.')
+    self.response.out.write(render_home(html, 'cancer'))
+
+
     
 def main():
   application = webapp.WSGIApplication([
@@ -399,6 +410,8 @@ def main():
       ('/omg', OmgHandler),
       ('/wtf', WtfHandler),
       ('/fuck', FuckHandler),
+      ('/cancer', CancerHandler),
+      (r'/(.*)', NiggaHandler),
       ], debug=True)
   wsgiref.handlers.CGIHandler().run(application)
 
