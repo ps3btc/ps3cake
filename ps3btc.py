@@ -24,7 +24,7 @@ from django.utils import simplejson as json
 from google.appengine.ext import webapp
 from google.appengine.api import memcache
 
-def html_header(title, header, body):
+def html_header(title, header, body, meta_description, meta_keywords):
   """Prepares the HTML header for serving the home page. Returns a
   list of the HTML. The CSS has been inspired from mollio.org and is
   under the Creative Commons License."""
@@ -33,9 +33,10 @@ def html_header(title, header, body):
           '<head><link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />',
           '<title>%s</title>' % title,
           '<meta name="google-site-verification" content="3Y6C1jgWitOJoAcYuHQWva_lKFwMNDVD2MxlKC9TCE0" />',
-          '<meta name="description" content="ps3btc - ps3 better than cake crawling twitter for latest ps3, xbox, wii tweets">',
-          '<meta name="keywords" content="ps3 twitter, ps3 tweets, wii tweets, xbox tweets, twitter mashup, twitter apps, '
-          'ps3, wii, xbox, xbox 360, video games, sony, playstation, playstation3, tweets">',
+          '<meta name="robots" content="index,follow" />',
+          '<meta name="language" content="en" />',
+          '<meta name="description" content="%s" />' % meta_description,
+          '<meta name="keywords" content="%s" />' % meta_keywords,
           '</head>',
           '<body>',
           '<div id="wrap">',
@@ -336,7 +337,10 @@ class Ps3Handler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc ps3 tweets; as the ps3 is better than cake',
                        '<a href="/">#ps3btc</a> ps3 tweets; since the ps3 is better than cake',
-                       'crawling twitter for the latest ps3 tweets.')
+                       'crawling twitter for the latest ps3 tweets.',
+                       'ps3btc - ps3 better than cake crawling twitter for latest ps3 tweets',
+                       'ps3 tweets, ps3 twitter, twitter mashup, ps3, twitter video games, twitter ps3, tweets ps3, tweets playstation, better than cake'
+                       )
     self.response.out.write(render_home(html, 'ps3'))
 
 
@@ -346,7 +350,10 @@ class NiggaHandler(webapp.RequestHandler):
   def get(self, link=None):
     html = html_header('#ps3btc nigga what?',
                        '<a href="/">#nigga</a> what?',
-                       'crawling twitter for tweets with the word nigga in them')
+                       'crawling twitter for tweets with the word nigga in them',
+                       'ps3btc - nigga better than cake crawling twitter for latest nigga tweets',
+                       'nigga tweets, n word tweets, nigga twitter, twitter mashup, nigga what tweets, nigga what twitter, better than cake'
+                       )
     self.response.out.write(render_home(html, 'nigga'))
 
 class WiiHandler(webapp.RequestHandler):
@@ -355,7 +362,10 @@ class WiiHandler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc wii tweets; can the wii be better than cake?',
                        '<a href="/">#ps3btc</a> wii tweets; can the wii be better than cake?',
-                       'crawling twitter for the latest wii tweets.')
+                       'crawling twitter for the latest wii tweets.',
+                       'ps3btc - wii better than cake crawling twitter for latest wii tweets',
+                       'wii tweets, wii twitter, twitter mashup, nintendo tweets, twitter video games, twitter wii, tweets wii, better than cake'                       
+                       )
     self.response.out.write(render_home(html, 'wii'))
 
 class XboxHandler(webapp.RequestHandler):
@@ -364,7 +374,10 @@ class XboxHandler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc xbox tweets; can the xbox be better than cake?',
                        '<a href="/">#ps3btc</a> xbox tweets; can the xbox be better than cake?',
-                       'crawling twitter for the latest xbox tweets.')
+                       'crawling twitter for the latest xbox tweets.',
+                       'ps3btc - xbox better than cake crawling twitter for latest xbox tweets',
+                       'xbox tweets, xbox twitter, twitter mashup, xbox, twitter video games, twitter xbox, tweets xbox, tweets xbox, better than cake'
+                       )
     self.response.out.write(render_home(html, 'xbox'))
 
 
@@ -372,7 +385,10 @@ class OmgHandler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc omg tweets; who is tweeting the word omg?',
                        '<a href="/">#ps3btc</a> omg tweets; who is tweeting the word omg?',
-                       'crawling twitter for the latest omg tweets.')
+                       'crawling twitter for the latest omg tweets.',
+                       'ps3btc - omg better than cake crawling twitter for latest omg tweets',
+                       'omg tweets, omg twitter, twitter mashup, omg better than cake'
+                       )
     self.response.out.write(render_home(html, 'omg'))
 
 
@@ -380,7 +396,10 @@ class WtfHandler(webapp.RequestHandler):
   def get(self, link=None):
     html = html_header('#ps3btc wtf tweets; who is tweeting the word wtf?',
                        '<a href="/">#ps3btc</a> wtf tweets; who is tweeting the word wtf?',
-                       'crawling twitter for the latest wtf tweets.')
+                       'crawling twitter for the latest wtf tweets.',
+                       'ps3btc - wtf better than cake crawling twitter for latest wtf tweets',
+                       'wtf tweets, wtf twitter, twitter mashup, wtf better than cake'
+                       )
     self.response.out.write(render_home(html, 'wtf'))
 
 
@@ -388,7 +407,10 @@ class FuckHandler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc fuck tweets; who is tweeting the word fuck?',
                        '<a href="/">#ps3btc</a> fuck tweets; who is tweeting the word fuck?',
-                       'crawling twitter for the latest fuck tweets.')
+                       'crawling twitter for the latest fuck tweets.',
+                       'ps3btc - fuck better than cake crawling twitter for latest fuck tweets',
+                       'fuck tweets, fuck twitter, twitter mashup, fuck better than cake'                    
+                       )
     self.response.out.write(render_home(html, 'fuck'))
 
 
@@ -396,11 +418,13 @@ class CancerHandler(webapp.RequestHandler):
   def get(self):
     html = html_header('#ps3btc cancer tweets; who is tweeting the word cancer?',
                        '<a href="/">#ps3btc</a> cancer tweets; who is tweeting the word cancer?',
-                       'crawling twitter for the latest cancer tweets.')
+                       'crawling twitter for the latest cancer tweets.',
+                       'ps3btc - cancer better than cake crawling twitter for latest cancer tweets',
+                       'cancer tweets, cancer twitter, twitter mashup, cancer better than cake'                    
+                       )
     self.response.out.write(render_home(html, 'cancer'))
 
 
-    
 def main():
   application = webapp.WSGIApplication([
       ('/', Ps3Handler),
