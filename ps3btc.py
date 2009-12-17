@@ -47,7 +47,7 @@ def html_header(title, header, body, meta_description, meta_keywords):
           '<span class="ps3space"><a href="/">#ps3</a>&nbsp;&nbsp;'
           '<a href="/wii">#wii</a>&nbsp;&nbsp;'
           '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-          '<a href="/n">#what</a>&nbsp;&nbsp;'
+          '<a href="/n">#nigga what?</a>&nbsp;&nbsp;'
           '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
           '<a href="/omg">#omg</a>&nbsp;&nbsp;'
           '<a href="/fuck">#fuck</a>&nbsp;&nbsp;'
@@ -62,13 +62,14 @@ def html_footer(html):
         '<a href="/">#ps3</a>&nbsp;&nbsp;'
         '<a href="/wii">#wii</a>&nbsp;&nbsp;'
         '<a href="/xbox">#xbox</a>&nbsp;&nbsp;'
-        '<a href="/n">#what</a>&nbsp;&nbsp;'
+        '<a href="/n">#nigga what?</a>&nbsp;&nbsp;'
         '<a href="/wtf">#wtf</a>&nbsp;&nbsp;'
         '<a href="/omg">#omg</a>&nbsp;&nbsp;'
         '<a href="/fuck">#fuck</a>&nbsp;&nbsp;'
-        '<a href="/cancer">#cancer</a>'
+        '<a href="/cancer">#cancer</a>&nbsp;&nbsp;'
+        '<a href="http://www.wiitweeter.com">wii tweeter</a>'
         '<p/><br>',
-        'ps3btc &copy; <a href="http://linkybinky.appspot.com">linkybinky</a> 2009. '
+        'ps3btc &copy; <a href="http://www.linkybinky.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
         '</div></center>',
         '<script type="text/javascript">',
