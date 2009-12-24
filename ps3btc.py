@@ -72,6 +72,7 @@ def html_footer(html):
         'ps3btc &copy; <a href="http://www.linkybinky.com">linkybinky</a> 2009. '
         '<a href="http://www.twitter.com" target="_blank"><img src="/static/powered-by-twitter-sig.gif"></a>'
         '</div></center>',
+        '<span id="oneforty.i.2002"></span>',
         '<script type="text/javascript">',
         'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");',
         'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/ga.js\' type=\'text/javascript\'%3E%3C/script%3E"));',
